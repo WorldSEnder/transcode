@@ -13,7 +13,6 @@ author:         Martin Molzer
 maintainer:     worldsbegin@gmx.de
 copyright:      2022 Martin Molzer
 license:        (Apache-2.0 OR MIT)
-license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
