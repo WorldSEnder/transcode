@@ -4,6 +4,7 @@ module Data.Transcode.Prim
 ( word8Host
 , word16Host
 , word32Host
+, intHost
 ) where
 
 import           Control.Transcoder
@@ -47,3 +48,5 @@ word16Host :: (Writable m, Readable n, MonadDecodeDiagnostics n) => Code phase m
 word16Host = fixedSizeStorable
 word32Host :: (Writable m, Readable n, MonadDecodeDiagnostics n) => Code phase m n Word32
 word32Host = fixedSizeStorable
+intHost :: (Writable m, Readable n, MonadDecodeDiagnostics n) => Code phase m n Int
+intHost = fixedSizeStorable

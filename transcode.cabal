@@ -27,6 +27,7 @@ library
       Control.Transcode.Readable
       Control.Transcode.Writable
       Control.Transcoder
+      Data.Transcode.List
       Data.Transcode.Maybe
       Data.Transcode.Prim
   other-modules:

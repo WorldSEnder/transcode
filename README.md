@@ -41,19 +41,21 @@ the longer `Transcoder` type.
 sketch for an implementation that writes a list would be as follows
 
 ```haskell
--- assumes two combinators that are currently not in the library:
-type HasLength a = HasLength_ Int -- a value of this type is evidence that the list some specific length
-codeListLen :: Transcoder phase [a] m n (HasLength a) -- this encoder writes the length to the output
-forEachEv :: HasLength a -- if we have evidence that the list has a specific length, we can transcode the list by element
-          -> Code phase m n a -> Code phase m n [a]
+-- Combinators from Data.Transcode.List
+-- | a value of this type is evidence that the list some specific length
+type HasLength a 
+-- | this encoder writes the length of the list to the output
+codeListLen :: Transcoder phase [a] m n (HasLength a)
+forEachEv :: HasLength a
+          -- ^ if we have evidence that the list has a specific length
+          -> Code phase m n a
+          -- ^ we can transcode each element of the list
+          -> Code phase m n [a]
 -- with this, the user code becomes
 codeList :: Code phase m n a -> Code phase m n [a]
 codeList elementCode = do
   evLen <- codeListLen
-  forEachEv evLen $ do
-    -- ...
-    elementCode
-    -- ...
+  forEachEv evLen elementCode
 ```
 
 The take-away really should be this:  For the clarity of the code, it should be clearly reasoned with proof-carrying

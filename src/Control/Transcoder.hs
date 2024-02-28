@@ -38,6 +38,7 @@ module Control.Transcoder
   , DecodePhase
   , uncheckedTranscode'
   , uncheckedTranscode
+  , uncheckedMap
   ) where
 
 import qualified Control.Lens.Iso as I
@@ -119,6 +120,9 @@ encode :: Functor m => Code EncodePhase m n a -> a -> m ()
 encode code a = void $ encodeR code a
 decode :: Functor n => Code DecodePhase m n a -> n a
 decode code = getUnique <$> decodeR code
+
+uncheckedMap ::(a -> b) -> Transcoder phase b m n r -> Transcoder phase a m n r
+uncheckedMap f code = uncheckedTranscode' (encodeR code . f) (decodeR code)
 
 mapIso :: (Functor m, Functor n) => I.AnIso a a b b -> Code phase m n a -> Code phase m n b
 mapIso iso code = I.withIso iso $ \f g ->
