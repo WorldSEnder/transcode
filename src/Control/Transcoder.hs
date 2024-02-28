@@ -3,6 +3,11 @@
 {-# LANGUAGE NoFieldSelectors #-}
 {-# LANGUAGE PatternSynonyms  #-}
 {-# LANGUAGE RoleAnnotations  #-}
+{-# LANGUAGE NamedFieldPuns  #-}
+{-# LANGUAGE KindSignatures  #-}
+{-# LANGUAGE RankNTypes  #-}
+{-# LANGUAGE DeriveFunctor  #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 {-# OPTIONS_GHC -Wno-partial-fields #-} -- we use NoFieldSelectors
 
@@ -27,6 +32,7 @@ module Control.Transcoder
   , uncheckedMkHasVariantField
   -- various utility
   , mapIso
+  , pair
   -- details the user shouldn't need to use
   , EncodePhase
   , DecodePhase
@@ -51,12 +57,12 @@ data Transcoder phase a m n r = Transcoder
   }
   deriving Functor
 
-type Encoder phase a m n r = phase ~ EncodePhase => a -> m r
-type Decoder phase a m n r = phase ~ DecodePhase => n r
+type Encoder phase a m r = phase ~ EncodePhase => a -> m r
+type Decoder phase a n r = phase ~ DecodePhase => n r
 -- | Construct a transcode from an encoder/decoder pair under the assumption of a specific coding phase.
 uncheckedTranscode'
-  :: Encoder phase a m n r
-  -> Decoder phase a m n r
+  :: Encoder phase a m r
+  -> Decoder phase a n r
   -> Transcoder phase a m n r
 uncheckedTranscode' enc dec = Transcoder { _encode = enc, _decode = dec }
 
@@ -108,6 +114,7 @@ uncheckedMkUnique = TheUnique_
 -- | A code for a type 'a' is a transcoder that deduces that the value is equivalent to a unique value
 -- that can also be deduced from the written byte sequence.
 type Code phase m n a = Transcoder phase a m n (TheUnique a)
+
 encode :: Functor m => Code EncodePhase m n a -> a -> m ()
 encode code a = void $ encodeR code a
 decode :: Functor n => Code DecodePhase m n a -> n a
@@ -117,6 +124,18 @@ mapIso :: (Functor m, Functor n) => I.AnIso a a b b -> Code phase m n a -> Code 
 mapIso iso code = I.withIso iso $ \f g ->
   let coerceEvAB (TheUnique a) = uncheckedMkUnique (f a)
   in uncheckedTranscode' (\b -> coerceEvAB <$> encodeR code (g b)) (coerceEvAB <$> decodeR code)
+
+pair
+  :: forall phase m n a b. (Applicative m, Applicative n)
+  => Code phase m n a
+  -> Code phase m n b
+  -> Code phase m n (a, b)
+pair ca cb = uncheckedTranscode' enc dec where
+  combine (TheUnique a) (TheUnique b) = uncheckedMkUnique (a, b)
+  enc :: Encoder phase (a, b) m (TheUnique (a, b))
+  enc (a, b) = combine <$> encodeR ca a <*> encodeR cb b
+  dec :: Decoder phase (a, b) n (TheUnique (a, b))
+  dec = combine <$> decodeR ca <*> decodeR cb
 
 -- | A claim that the encoded value of type 'a' has the variant 'v', with a field 'f' that has the property
 -- claimed by 'r'.

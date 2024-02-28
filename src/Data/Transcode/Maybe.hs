@@ -2,6 +2,10 @@
 {-# LANGUAGE GADTs            #-}
 {-# LANGUAGE LambdaCase       #-}
 {-# LANGUAGE NoFieldSelectors #-}
+{-# LANGUAGE KindSignatures      #-}
+{-# LANGUAGE NamedFieldPuns      #-}
+{-# LANGUAGE RankNTypes          #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 {-# OPTIONS_GHC -Wno-partial-fields #-} -- we use NoFieldSelectors
 
@@ -82,14 +86,14 @@ codeMaybeDiscrim = uncheckedTranscode' enc dec
     -- encoding primitives: it's trivial to check that the coding is correct from the use of the discriminant
     -- this part is if you will the "critical section" that needs to be checked. It should be easy to see that
     -- this is trivial to generate for ADTs.
-    enc :: Encoder phase (Maybe a) m n (MaybeCoding phase m n a)
+    enc :: Encoder phase (Maybe a) m (MaybeCoding phase m n a)
     enc Nothing = do
       W.singleton 0x0
       return $ transformNothing StageEncodeNothing
     enc (Just x) = do
       W.singleton 0x1
       return $ transformJust $ StageEncodeJust x
-    dec :: Decoder phase (Maybe a) m n (MaybeCoding phase m n a)
+    dec :: Decoder phase (Maybe a) n (MaybeCoding phase m n a)
     dec = do
       b <- R.readByte
       case b of
