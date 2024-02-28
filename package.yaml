@@ -1,0 +1,53 @@
+name:                transcode
+version:             0.1.0.0
+github:              "WorldSEnder/transcode"
+license:             Apache-2.0 OR MIT
+author:              "Martin Molzer"
+maintainer:          "worldsbegin@gmx.de"
+copyright:           "2022 Martin Molzer"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+description:         Please see the README on GitHub at <https://github.com/WorldSEnder/transcode#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- streaming-bytestring # >= 0.2.4 && < 0.3
+- streaming
+- bytestring
+- mtl
+- mmorph
+- lens
+- transformers
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+tests:
+  transcode-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - transcode
+    - streaming-bytestring # >= 0.2.4 && < 0.3

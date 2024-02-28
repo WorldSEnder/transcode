@@ -1,0 +1,72 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.35.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           transcode
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/WorldSEnder/transcode#readme>
+homepage:       https://github.com/WorldSEnder/transcode#readme
+bug-reports:    https://github.com/WorldSEnder/transcode/issues
+author:         Martin Molzer
+maintainer:     worldsbegin@gmx.de
+copyright:      2022 Martin Molzer
+license:        (Apache-2.0 OR MIT)
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/WorldSEnder/transcode
+
+library
+  exposed-modules:
+      Control.Transcode
+      Control.Transcode.Readable
+      Control.Transcode.Writable
+      Control.Transcoder
+      Data.Transcode.Maybe
+      Data.Transcode.Prim
+  other-modules:
+      Paths_transcode
+  autogen-modules:
+      Paths_transcode
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , lens
+    , mmorph
+    , mtl
+    , streaming
+    , streaming-bytestring
+    , transformers
+  default-language: Haskell2010
+
+test-suite transcode-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_transcode
+  autogen-modules:
+      Paths_transcode
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , lens
+    , mmorph
+    , mtl
+    , streaming
+    , streaming-bytestring
+    , transcode
+    , transformers
+  default-language: Haskell2010
